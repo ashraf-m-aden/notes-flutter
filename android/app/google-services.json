@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "452159852960",
+    "project_id": "notes-dart",
+    "storage_bucket": "notes-dart.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452159852960:android:86427c0e5200c2d7b9d4c5",
+        "android_client_info": {
+          "package_name": "work.ashraf.notes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "452159852960-r3ed937lmmv9h097a8sq8jao2kqlt6vl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbQNJGjAsZIgCIgDnf3ChXgDtotfoWUhc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "452159852960-r3ed937lmmv9h097a8sq8jao2kqlt6vl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
