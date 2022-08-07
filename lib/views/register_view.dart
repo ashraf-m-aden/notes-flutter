@@ -36,60 +36,53 @@ class _RegisterViewState extends State<RegisterView> {
       appBar: AppBar(
         title: const Text('Register'),
       ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  Text('Bonjour, veuillez vous enregistrer.'),
-                  TextField(
-                    controller: _email,
-                    decoration: InputDecoration(hintText: "Please your email"),
-                    keyboardType: TextInputType.emailAddress,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                  ),
-                  TextField(
-                    controller: _password,
-                    decoration:
-                        InputDecoration(hintText: "Please your password"),
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final email = _email.text;
-                      final password = _password.text;
+      body: Column(
+        children: [
+          const Text('Bonjour, veuillez vous enregistrer.'),
+          TextField(
+            controller: _email,
+            decoration: const InputDecoration(hintText: "Please your email"),
+            keyboardType: TextInputType.emailAddress,
+            enableSuggestions: false,
+            autocorrect: false,
+          ),
+          TextField(
+            controller: _password,
+            decoration: const InputDecoration(hintText: "Please your password"),
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+          ),
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
 
-                      try {
-                        final userCredential = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: email, password: password);
-                        print(userCredential);
-                      } on FirebaseAuthException catch (e) {
-                        switch (e.code) {
-                          case "operation-not-allowed":
-                            print(
-                                "Anonymous auth hasn't been enabled for this project.");
-                            break;
-                          default:
-                            print(e);
-                        }
-                      }
-                    },
-                    child: const Text('Register'),
-                  ),
-                ],
-              );
-            default:
-              return const Text('Loading');
-          }
-        },
+              try {
+                final userCredential = await FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                        email: email, password: password);
+                // print(userCredential);
+              } on FirebaseAuthException catch (e) {
+                switch (e.code) {
+                  case "operation-not-allowed":
+                    // print(
+                    //     "Anonymous auth hasn't been enabled for this project.");
+                    break;
+                  default:
+                  // print(e);
+                }
+              }
+            },
+            child: const Text('Register'),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login/', (route) => false);
+              },
+              child: const Text('Se connecter'))
+        ],
       ),
     );
   }

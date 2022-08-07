@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:notes/views/auth_check.dart';
 import 'package:notes/views/login_views.dart';
-
-import 'firebase_options.dart';
+import 'package:notes/views/notes_view.dart';
+import 'package:notes/views/register_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,6 +11,11 @@ void main() {
     theme: ThemeData(
       primarySwatch: Colors.pink,
     ),
-    home: const LoginView(),
+    home: const Auth(),
+    routes: {
+      '/login/': (context) => const LoginView(),
+      '/register/': (context) => const RegisterView(),
+      '/notes/': (context) => const NotesView()
+    },
   ));
 }
