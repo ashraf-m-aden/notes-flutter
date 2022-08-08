@@ -1,11 +1,15 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'dart:developer' as devtools;
 
 import 'package:notes/constants/routes.dart';
+
+import '../utilities/dialogs.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
@@ -28,6 +32,7 @@ class _NotesViewState extends State<NotesView> {
               case MenuAction.logout:
                 final shouldLogout = await showLogOutDialog(context);
                 if (shouldLogout) {
+                  await FirebaseAuth.instance.signOut();
                   Navigator.of(context).pushNamed(loginRoute);
                 }
                 break;
@@ -48,36 +53,4 @@ class _NotesViewState extends State<NotesView> {
       body: const Text('Hello world'),
     );
   }
-}
-
-Future<bool> showLogOutDialog(BuildContext context) {
-  // c'est une promise (futur) qui va retourner un bool grace a showDialog
-  return showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('log out'),
-              content: const Text('Etes vous sur de vous deconnecter'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    devtools.log('Yes');
-                    Navigator.of(context).pop(
-                        true); // apparemment ca return true, je ne sais pas encore pkw on peut juste pas faire "return true"
-                  },
-                  child: const Text("Yes"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    devtools.log('Cancel');
-                    Navigator.of(context).pop(false);
-                  },
-                  child: const Text("Cancel"),
-                ),
-              ],
-            );
-          })
-      .then((value) =>
-          value ??
-          false); // c'est au cas ou l'utilisateur touche les touches d'en bas et n'y repond pas
 }

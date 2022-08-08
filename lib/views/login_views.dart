@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/constants/routes.dart';
+import 'package:notes/utilities/dialogs.dart';
 
 import '../firebase_options.dart';
 
@@ -82,9 +83,6 @@ login(email, password, context) async {
         .signInWithEmailAndPassword(email: email, password: password);
     Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false);
   } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      default:
-        print(e);
-    }
+    ShowDynamicDialog(context, 'Error', e.toString());
   }
 }
