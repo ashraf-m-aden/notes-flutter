@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:notes/constants/routes.dart';
 
 import '../firebase_options.dart';
 
@@ -58,7 +59,7 @@ class _LoginViewState extends State<LoginView> {
             onPressed: () async {
               final email = _email.text;
               final password = _password.text;
-              print("its working");
+              const CircularProgressIndicator();
               await login(email, password, context);
             },
             child: const Text('Login'),
@@ -66,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
           TextButton(
               onPressed: () {
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/register/', (route) => false);
+                    .pushNamedAndRemoveUntil(registerRoute, (route) => false);
               },
               child: const Text('Pas encore enregistrer? Fais le ici!'))
         ],
@@ -79,7 +80,7 @@ login(email, password, context) async {
   try {
     final userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
-    Navigator.of(context).pushNamedAndRemoveUntil('/notes/', (route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false);
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       default:

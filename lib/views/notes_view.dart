@@ -5,6 +5,8 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'dart:developer' as devtools;
 
+import 'package:notes/constants/routes.dart';
+
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
 
@@ -25,7 +27,9 @@ class _NotesViewState extends State<NotesView> {
             switch (value) {
               case MenuAction.logout:
                 final shouldLogout = await showLogOutDialog(context);
-                print(shouldLogout);
+                if (shouldLogout) {
+                  Navigator.of(context).pushNamed(loginRoute);
+                }
                 break;
               case MenuAction.profile:
                 // TODO: Handle this case.

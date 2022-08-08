@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes/constants/routes.dart';
 import 'package:notes/views/auth_check.dart';
 import 'package:notes/views/login_views.dart';
 import 'package:notes/views/notes_view.dart';
@@ -13,9 +14,9 @@ void main() {
     ),
     home: const Auth(),
     routes: {
-      '/login/': (context) => const LoginView(),
-      '/register/': (context) => const RegisterView(),
-      '/notes/': (context) => const NotesView()
+      loginRoute: (context) => const LoginView(),
+      registerRoute: (context) => const RegisterView(),
+      notesRoute: (context) => const NotesView()
     },
   ));
 }

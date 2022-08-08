@@ -19,12 +19,11 @@ class Auth extends StatelessWidget {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
-            if (user != null)
+            if (user != null) {
               return const NotesView();
-            else
-              // Navigator.of(context).push(
-              //     MaterialPageRoute(builder: (context) => const LoginView()));   ca c pour naviguer dans un autre scafold
+            } else {
               return const LoginView();
+            }
           default:
             return const CircularProgressIndicator();
         }
