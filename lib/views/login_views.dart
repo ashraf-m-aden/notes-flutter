@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/constants/routes.dart';
+import 'package:notes/services/auth/authException.dart';
+import 'package:notes/services/auth/auth_service.dart';
 import 'package:notes/utilities/dialogs.dart';
-
-import '../firebase_options.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -79,10 +77,16 @@ class _LoginViewState extends State<LoginView> {
 
 login(email, password, context) async {
   try {
-    final userCredential = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
+    await AuthService.firebase().login(
+      email: email,
+      password: password,
+    );
     Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false);
-  } on FirebaseAuthException catch (e) {
-    ShowDynamicDialog(context, 'Error', e.toString());
+  } on UserNotFoundAuthException {
+    ShowDynamicDialog(context, 'Error', 'L\'utilisateur n\'existe pas.');
+  } on WrongPasswordAuthException {
+    ShowDynamicDialog(context, 'Error', 'Mauvais mot de passe');
+  } on GenericAuthException {
+    ShowDynamicDialog(context, 'Error', 'Erreur d\'authentification');
   }
 }

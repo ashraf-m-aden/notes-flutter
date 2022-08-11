@@ -1,8 +1,7 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-import '../firebase_options.dart';
+import 'package:notes/services/auth/authException.dart';
+import 'package:notes/services/auth/auth_service.dart';
+import 'package:notes/utilities/dialogs.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -59,19 +58,21 @@ class _RegisterViewState extends State<RegisterView> {
               final password = _password.text;
 
               try {
-                final userCredential = await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: email, password: password);
+                await AuthService.firebase()
+                    .createUser(email: email, password: password);
                 // print(userCredential);
-              } on FirebaseAuthException catch (e) {
-                switch (e.code) {
-                  case "operation-not-allowed":
-                    // print(
-                    //     "Anonymous auth hasn't been enabled for this project.");
-                    break;
-                  default:
-                  // print(e);
-                }
+              } on UserNotLoggedInAuthException {
+                ShowDynamicDialog(
+                    context, 'Error', 'L\'utilisateur n\'est pas connecté.');
+              } on WeakPasswordAuthException {
+                ShowDynamicDialog(context, 'Error', 'Faible mot de passe');
+              } on EmailAlreadyInUseAuthException {
+                ShowDynamicDialog(context, 'Error', 'Email deja existant');
+              } on InvalidEmailAuthException {
+                ShowDynamicDialog(context, 'Error', 'Email erroné');
+              } on GenericAuthException {
+                ShowDynamicDialog(
+                    context, 'Error', 'Erreur d\'authentification');
               }
             },
             child: const Text('Register'),
