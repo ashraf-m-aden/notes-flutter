@@ -95,8 +95,12 @@ class NoteService {
       {required DatabaseNote note, required String text}) async {
     await _dbService.ensureDBisOpen();
     final db = _dbService.getDbOrThrow();
-    const text = "Ceci est une mise à jour";
-    final updateCount = await db.update(noteTable, {textColumn: text});
+    final updateCount = await db.update(
+      noteTable,
+      {textColumn: text},
+      where: 'id = ?',
+      whereArgs: [note.id],
+    );
     if (updateCount == 0) {
       throw CouldNotUpdateNote();
     }
