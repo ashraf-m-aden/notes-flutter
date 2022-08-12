@@ -57,3 +57,34 @@ Future<bool> showLogOutDialog(BuildContext context) {
           value ??
           false); // c'est au cas ou l'utilisateur touche les touches d'en bas et n'y repond pas
 }
+
+Future<bool> showDeleteDialog(BuildContext context) {
+  // dialog pour logout
+  // c'est une promise (futur) qui va retourner un bool grace a showDialog
+  return showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Delete?'),
+              content: const Text('Etes vous sur de vouloir supprimer?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(
+                        true); // apparemment ca return true, je ne sais pas encore pkw on peut juste pas faire "return true"
+                  },
+                  child: const Text("Yes"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text("Cancel"),
+                ),
+              ],
+            );
+          })
+      .then((value) =>
+          value ??
+          false); // c'est au cas ou l'utilisateur touche les touches d'en bas et n'y repond pas
+}
