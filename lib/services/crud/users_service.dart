@@ -5,7 +5,12 @@ import 'crud_exceptions.dart';
 import 'db_service.dart';
 
 class UserService {
-  late final DbService _dbService;
+  final DbService _dbService = DbService();
+  UserService._sharedInstance();
+
+  static final UserService _shared = UserService._sharedInstance();
+  factory UserService() => _shared;
+
   Future<void> deleteUser({required String email}) async {
     await _dbService.ensureDBisOpen();
     final db = _dbService.getDbOrThrow();

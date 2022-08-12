@@ -8,6 +8,10 @@ import 'crud_exceptions.dart';
 
 class DbService {
   Database? database;
+  DbService._sharedInstance();
+
+  static final DbService _shared = DbService._sharedInstance();
+  factory DbService() => _shared;
   Future<void> ensureDBisOpen() async {
     try {
       open();
@@ -44,7 +48,6 @@ class DbService {
         final dbPath = join(docsPath.path, dbName);
         final db = await openDatabase(dbPath);
         database = db;
-
 // create user table and note table
         await db.execute(createUserTable);
         await db.execute(createNoteTable);

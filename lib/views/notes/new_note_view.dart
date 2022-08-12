@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:notes/constants/db-constants.dart';
 import 'package:notes/services/auth/auth_service.dart';
 import 'package:notes/services/crud/notes_service.dart';
 import 'package:notes/services/crud/users_service.dart';
@@ -71,6 +68,7 @@ class _NewNoteViewState extends State<NewNoteView> {
   @override
   void initState() {
     _noteService = NoteService();
+    _userService = UserService();
     _textController = TextEditingController();
     super.initState();
   }

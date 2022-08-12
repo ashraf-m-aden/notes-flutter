@@ -11,12 +11,16 @@ class NoteService {
   final UserService _userService = UserService();
   final DbService _dbService = DbService();
   List<DatabaseNote> _notes = [];
+  late final StreamController<List<DatabaseNote>> _noteStreamController;
   // c'est pour creer un singleton du service utilisé partt,
-  NoteService._sharedInstance();
+  NoteService._sharedInstance() {
+    _noteStreamController =
+        StreamController<List<DatabaseNote>>.broadcast(onListen: () {
+      _noteStreamController.sink.add(_notes);
+    });
+  }
   static final NoteService _shared = NoteService._sharedInstance();
   factory NoteService() => _shared;
-  final _noteStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
 
   Stream<List<DatabaseNote>> get allNotes => _noteStreamController.stream;
 
@@ -42,8 +46,10 @@ class NoteService {
       textColumn: text,
     });
     final note = DatabaseNote(id: noteId, userId: owner.id, text: text);
-    _notes.add(note);
-    _noteStreamController.add(_notes);
+    // _notes.add(note);
+    // print('notes from noteservice');
+    // print(_notes);
+    // _noteStreamController.add(_notes);
     return note;
   }
 
@@ -105,11 +111,12 @@ class NoteService {
       throw CouldNotUpdateNote();
     }
     await cacheNotes();
-    final updatedNote = await getNote(id: note.id);
-    _notes.removeWhere((note) => note.id == note.id);
-    _notes.add(updatedNote);
-    _noteStreamController.add(_notes);
-    return updatedNote;
+    // final updatedNote = await getNote(id: note.id);
+    // _notes.removeWhere((note) => note.id == note.id);
+    // _notes.add(updatedNote);
+    // _noteStreamController.add(_notes);
+    // return updatedNote;
+    return note;
   }
 }
 
