@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
 
 import '../../constants/db-constants.dart';
 import 'crud_exceptions.dart';
 import 'db_service.dart';
 
 class UserService {
+  late final DbService _dbService;
   Future<void> deleteUser({required String email}) async {
-    final db = DbService().getDbOrThrow();
+    await _dbService.ensureDBisOpen();
+    final db = _dbService.getDbOrThrow();
 
     final deletedCount = await db.delete(
       userTable,
@@ -21,13 +20,14 @@ class UserService {
     }
   }
 
-  Future<DatabaseUser> getUser({required String email}) async {
-    final db = DbService().getDbOrThrow();
+  Future<DatabaseUser> getUser({required String? email}) async {
+    await _dbService.ensureDBisOpen();
+    final db = _dbService.getDbOrThrow();
     final results = await db.query(
       userTable,
       limit: 1,
       where: 'email = ?',
-      whereArgs: [email.toLowerCase()],
+      whereArgs: [email?.toLowerCase()],
     );
     if (results.isEmpty) {
       throw CouldNotFindUser();
@@ -37,33 +37,47 @@ class UserService {
   }
 
   Future<Iterable<DatabaseUser>> getAllUser() async {
-    final db = DbService().getDbOrThrow();
+    await _dbService.ensureDBisOpen();
+    final db = _dbService.getDbOrThrow();
     final users = await db.query(userTable);
     return users.map((userRow) => DatabaseUser.fromRow(userRow));
   }
 
-  Future<DatabaseUser> createUser({required String email}) async {
-    final db = DbService().getDbOrThrow();
+  Future<DatabaseUser> createUser({required String? email}) async {
+    await _dbService.ensureDBisOpen();
+    final db = _dbService.getDbOrThrow();
 
     final results = await db.query(
       userTable,
       limit: 1,
       where: 'email = ?',
-      whereArgs: [email.toLowerCase()],
+      whereArgs: [email?.toLowerCase()],
     );
     if (results.isNotEmpty) {
       throw UserAlreadyExist();
     }
     final userId =
-        await db.insert(userTable, {emailColumn: email.toLowerCase()});
+        await db.insert(userTable, {emailColumn: email?.toLowerCase()});
     return DatabaseUser(id: userId, email: email);
+  }
+
+  Future<DatabaseUser> getOrCreateUser({required String? email}) async {
+    try {
+      final user = await getUser(email: email);
+      return user;
+    } on CouldNotFindUser {
+      final createdUser = await createUser(email: email);
+      return createdUser;
+    } catch (e) {
+      rethrow;
+    }
   }
 }
 
 @immutable
 class DatabaseUser {
   final int id;
-  final String email;
+  final String? email;
 
   const DatabaseUser({
     required this.id,

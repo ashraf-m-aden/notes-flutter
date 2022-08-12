@@ -6,7 +6,7 @@ const userIdColumn = "user_id";
 const emailColumn = "email";
 const textColumn = "text";
 
-const createUserTable = '''CREATE TABLE IF NOT EXIST "user" (
+const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"email"	TEXT,
 	"password"	TEXT,
@@ -14,7 +14,7 @@ const createUserTable = '''CREATE TABLE IF NOT EXIST "user" (
 );
 ''';
 
-const createNoteTable = '''CREATE TABLE IF NOT EXIST "note" (
+const createNoteTable = '''CREATE TABLE IF NOT EXISTS "note" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"user_id"	INTEGER NOT NULL,
 	"text"	TEXT,

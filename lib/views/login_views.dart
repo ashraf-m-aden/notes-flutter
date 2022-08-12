@@ -16,6 +16,22 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController
       _email; //create a variable, late veut dire tu promets de lui assigner une valeur apres
   late final TextEditingController _password;
+  Future<void> login(email, password, context) async {
+    try {
+      await AuthService.firebase().login(
+        email: email,
+        password: password,
+      );
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+    } on UserNotFoundAuthException {
+      ShowDynamicDialog(context, 'Error', 'L\'utilisateur n\'existe pas.');
+    } on WrongPasswordAuthException {
+      ShowDynamicDialog(context, 'Error', 'Mauvais mot de passe');
+    } on GenericAuthException {
+      ShowDynamicDialog(context, 'Error', 'Erreur d\'authentification');
+    }
+  }
 
   @override
   void initState() {
@@ -72,21 +88,5 @@ class _LoginViewState extends State<LoginView> {
         ],
       ),
     );
-  }
-}
-
-login(email, password, context) async {
-  try {
-    await AuthService.firebase().login(
-      email: email,
-      password: password,
-    );
-    Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false);
-  } on UserNotFoundAuthException {
-    ShowDynamicDialog(context, 'Error', 'L\'utilisateur n\'existe pas.');
-  } on WrongPasswordAuthException {
-    ShowDynamicDialog(context, 'Error', 'Mauvais mot de passe');
-  } on GenericAuthException {
-    ShowDynamicDialog(context, 'Error', 'Erreur d\'authentification');
   }
 }

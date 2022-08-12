@@ -1,3 +1,4 @@
+import 'package:notes/services/crud/notes_service.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -7,6 +8,13 @@ import 'crud_exceptions.dart';
 
 class DbService {
   Database? database;
+  Future<void> ensureDBisOpen() async {
+    try {
+      open();
+    } on DatabaseAlreadyOpenException {
+      //empty
+    }
+  }
 
   Database getDbOrThrow() {
     final db = database;
@@ -30,18 +38,21 @@ class DbService {
   Future<void> open() async {
     if (database != null) {
       throw DatabaseAlreadyOpenException();
-    }
-    try {
-      final docsPath = await getApplicationDocumentsDirectory();
-      final dbPath = join(docsPath.path, dbName);
-      final db = await openDatabase(dbPath);
-      database = db;
+    } else {
+      try {
+        final docsPath = await getApplicationDocumentsDirectory();
+        final dbPath = join(docsPath.path, dbName);
+        final db = await openDatabase(dbPath);
+        database = db;
 
 // create user table and note table
-      await db.execute(createUserTable);
-      await db.execute(createNoteTable);
-    } on MissingPlatformDirectoryException {
-      throw UnableToGetDocumentDirectoryException();
+        await db.execute(createUserTable);
+        await db.execute(createNoteTable);
+
+        await NoteService().cacheNotes();
+      } on MissingPlatformDirectoryException {
+        throw UnableToGetDocumentDirectoryException();
+      }
     }
   }
 }
