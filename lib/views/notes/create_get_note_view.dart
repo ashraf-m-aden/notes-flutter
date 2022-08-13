@@ -2,21 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:notes/services/auth/auth_service.dart';
 import 'package:notes/services/crud/notes_service.dart';
 import 'package:notes/services/crud/users_service.dart';
+import 'package:notes/utilities/get_argument.dart';
 
-class NewNoteView extends StatefulWidget {
-  const NewNoteView({Key? key}) : super(key: key);
+class CreateAndUpdateNoteView extends StatefulWidget {
+  const CreateAndUpdateNoteView({Key? key}) : super(key: key);
 
   @override
-  State<NewNoteView> createState() => _NewNoteViewState();
+  State<CreateAndUpdateNoteView> createState() =>
+      _CreateAndUpdateNoteViewState();
 }
 
-class _NewNoteViewState extends State<NewNoteView> {
+class _CreateAndUpdateNoteViewState extends State<CreateAndUpdateNoteView> {
   DatabaseNote? _note;
   late final NoteService _noteService;
   late final UserService _userService;
   late final TextEditingController _textController;
 
-  Future<DatabaseNote> _createNewNote() async {
+  Future<DatabaseNote> createOrGetExistingNote(BuildContext context) async {
+    final widgetNote = context.getArgument<DatabaseNote>();
+
+    if (widgetNote != null) {
+      _note = widgetNote;
+      _textController.text = widgetNote.text;
+      return widgetNote;
+    }
+
     // ici on genere une note vide mais au moins avk l'id du owner
     final existingNote = _note;
     if (existingNote != null) {
@@ -25,7 +35,9 @@ class _NewNoteViewState extends State<NewNoteView> {
     final currentUser = AuthService.firebase().currentUser;
     final email = currentUser!.user.email;
     final owner = await _userService.getUser(email: email);
-    return await _noteService.createNote(owner: owner);
+    final newNote = await _noteService.createNote(owner: owner);
+    _note = newNote;
+    return newNote;
   }
 
   void _deleteNoteIfTextIsEmpty() async {
@@ -90,7 +102,7 @@ class _NewNoteViewState extends State<NewNoteView> {
         title: const Text('New note'),
       ),
       body: FutureBuilder(
-        future: _createNewNote(),
+        future: createOrGetExistingNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
